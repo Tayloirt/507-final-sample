@@ -12,14 +12,14 @@ class Media(db.Model):
     def __init__(self, name = None, artist_id = None, media_dict = None):
         self.name = name
         self.artist_id = artist_id
-        if media_dict:
+        if media_dict:  # rewrite __init__() to accept raw dict as input for constructor
             self.name = media_dict['trackName']
             self.artist_id = media_dict['artistId']
 
-    def __repr__(self):
+    def __repr__(self):  # rewrite __repr__() to show user-friendly info
         return "{media_name} by {artist_name}".format(
             media_name = self.name, 
-            artist_name = self.artist.name
+            artist_name = self.artist.name  # use artist relationship here
         )
 
     def save_to_db(self):
@@ -34,9 +34,8 @@ class Artist(db.Model):
     name = db.Column(db.String(250))
     main_genre = db.Column(db.String(250))
 
-
     def __init__(self, id = None, name = None, main_genre = None, artist_dict = None):
-        self.id = id
+        self.id = id  # use the original id as id in db
         self.name = name
         self.main_genre = main_genre
         if artist_dict:
@@ -44,9 +43,8 @@ class Artist(db.Model):
             self.name = artist_dict['results'][0]['artistName']
             self.main_genre = artist_dict['results'][0]['primaryGenreName']
 
-
     def __repr__(self):
-        return "{artist} has {no} media(s):\n {detail}".format(
+        return "{artist} ({no}) :\n {detail}".format(
             artist = self.name,
             no = len(self.media), 
             detail = "\n".join([str(media) for media in self.media])

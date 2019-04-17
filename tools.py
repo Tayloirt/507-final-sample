@@ -34,7 +34,7 @@ def get_data_w_cache(url, params = {}, headers = {}):
     print("* Making a request to get new data from url", unique_ident, "...")
     data = requests.get(url, params = params, headers = headers).text
     if '<!DOCTYPE html>' not in data:
-        data = json.loads(data)
+        data = json.loads(data)  # extract json data
     CACHE_DICTION[unique_ident] = data
     dumped_json_cache = json.dumps(CACHE_DICTION, indent = 2)
     with open(CACHE, 'w') as cache_file:
@@ -59,11 +59,11 @@ def populate_data_into_db(media_list):
     for media in media_list:
         new_media = Media(media_dict = media)
         if Media.query.filter_by(name = new_media.name, artist_id = new_media.artist_id).first():
-            continue # just in case you have same two media in db
+            continue  # just in case you have same two media in db
         if Artist.query.filter_by(id=new_media.artist_id).first() == None:
             artist_dict = look_up_artist_info(new_media.artist_id)
             new_artist = Artist(artist_dict = artist_dict)
-            new_artist.save_to_db() # you have to save artist first, before you save a new media
+            new_artist.save_to_db()  # you have to save artist first, before you save a new media
         new_media.save_to_db()
     print("* Finish populating the data.")
 
